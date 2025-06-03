@@ -92,9 +92,7 @@ http://localhost:3000
 
 ## 📝 Observações
 
-- Certifique-se de que o backend está rodando corretamente antes de iniciar o frontend, pois o frontend depende da API.
-- Se for necessário, configure os arquivos `.env` no backend e frontend para apontar corretamente para os serviços.
-
+- Tenha certeza que o backend está rodando corretamente antes de iniciar o frontend, pois o frontend depende da API.
 ---
 
 ## 💻 Estrutura de Pastas
@@ -120,12 +118,6 @@ http://localhost:3000
   ```bash
   cd frontend && npm run dev
   ```
-
----
-
-## 🤝 Contribuição
-
-Sinta-se livre para abrir issues, sugestões ou melhorias.
 
 ---
 
