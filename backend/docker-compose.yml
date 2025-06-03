@@ -1,0 +1,84 @@
+# version: '3.9'
+
+# services:
+#   db:
+#     image: mysql:8.0
+#     environment:
+#       MYSQL_ROOT_PASSWORD: rootpassword
+#       MYSQL_DATABASE: investment_db
+#       MYSQL_USER: user
+#       MYSQL_PASSWORD: userpassword
+#     ports:
+#       - '3307:3306'
+#     volumes:
+#       - db_data:/var/lib/mysql
+#     networks:
+#       - app-network
+#     healthcheck:
+#       test: [ "CMD", "mysqladmin", "ping", "-h", "db", "-u", "root", "-prootpassword" ]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+
+#   backend:
+#     build: .
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     ports:
+#       - '5000:5000'
+#     environment:
+#       DATABASE_URL: mysql://user:userpassword@db:3306/investment_db
+#     volumes:
+#       - ./src:/app/src
+#       - /app/node_modules
+#     command: sh -c "./wait-for-it.sh db:3306 -- npx prisma migrate deploy && npm run dev"
+#     networks:
+#       - app-network
+
+# volumes:
+#   db_data:
+
+
+# networks:
+#   app-network:
+
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      MYSQL_DATABASE: clientdb
+      MYSQL_USER: userdb
+      MYSQL_PASSWORD: userpassword123
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  backend:
+    build: .
+    container_name: fastify_backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "mysql://userdb:userpassword123@db:3306/clientdb"
+    command: sh -c "./wait-for-it.sh db:3306 -- npx prisma migrate deploy && npm run dev"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id      Int      @id @default(autoincrement())
+  name    String
+  email   String   @unique
+  status  ClientStatus @default(ATIVO)
+  assets  Asset[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id        Int      @id @default(autoincrement())
+  name      String
+  currentValue Decimal @db.Decimal(10,2)
+
+  clientId  Int
+  client    Client   @relation(fields: [clientId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ClientStatus {
+  ATIVO
+  INATIVO
+}
