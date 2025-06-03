@@ -3,7 +3,7 @@ import ClientModel from '../models/ClientModel';
 import { prisma } from '../server';
 import { ClientStatus } from '../enums';
 import { validate } from '../utils/zodValidation';
-import { clientSchema } from '../ schemas/clientSchema';
+import { clientSchema, clientUpdateSchema } from '../ schemas/clientSchema';
 
 export default class ClientController {
   static async getAll(req: FastifyRequest, reply: FastifyReply) {
@@ -33,6 +33,9 @@ export default class ClientController {
   }
 
   static async update(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    const params = validate(clientUpdateSchema, req.body, reply);
+    if (!params) return;
+
     const id = Number(req.params.id);
     const data = req.body as {
       name?: string;

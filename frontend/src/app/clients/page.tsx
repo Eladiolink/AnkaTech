@@ -9,6 +9,7 @@ type Client = {
   id: number;
   name: string;
   email: string;
+  status: 'ATIVO' | 'INATIVO';
 };
 
 export default function ClientsPage() {
@@ -32,19 +33,55 @@ export default function ClientsPage() {
       </div>
 
       <div className="grid gap-4">
-        {data?.map((client) => (
-          <Card key={client.id}>
-            <CardContent className="p-4 flex justify-between items-center">
-              <div>
-                <h2 className="font-semibold">{client.name}</h2>
-                <p className="text-sm">{client.email}</p>
-              </div>
-              <Button asChild variant="outline">
-                <Link href={`/clients/form?id=${client.id}`}>Editar</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        {data?.map((client) => {
+          const isInactive = client.status === 'INATIVO';
+
+          return (
+            <Card
+              key={client.id}
+              className={`
+    ${isInactive ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted hover:shadow-md cursor-pointer'}
+  `}
+              onClick={() => {
+                if (isInactive) return;
+                const link = document.getElementById(`link-client-${client.id}`);
+                link?.click();
+              }}
+            >
+              <CardContent className="flex items-center justify-between h-20">
+                <Link
+                  id={`link-client-${client.id}`}
+                  href={isInactive ? '#' : `/clients/assets?clientId=${client.id}`}
+                  className="flex-1 flex h-full"
+                  tabIndex={isInactive ? -1 : 0}
+                  aria-disabled={isInactive}
+                  onClick={(e) => {
+                    if (isInactive) {
+                      e.preventDefault();
+                    }
+                    e.stopPropagation(); // <-- impede que clique no link propague para o card
+                  }}
+                >
+                  <div className="flex flex-col justify-center w-full">
+                    <h2 className="font-semibold">{client.name}</h2>
+                    <p className="text-sm">{client.email}</p>
+                  </div>
+                </Link>
+
+                <div className="flex items-center">
+                  <Button
+                    asChild
+                    variant="outline"
+                    disabled={isInactive}
+                    onClick={(e) => e.stopPropagation()} // <-- impede que clique no botão propague para o card
+                  >
+                    <Link href={`/clients/form?id=${client.id}`}>Editar</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import AssetModel from '../models/AssetModel';
 import { prisma } from '../server';
 import { validate } from '../utils/zodValidation';
-import { assetSchema } from '../ schemas/assetSchema';
+import { assetSchema, assetUpdateSchema } from '../ schemas/assetSchema';
 
 export default class AssetController {
 
@@ -49,6 +49,9 @@ export default class AssetController {
   }
 
   static async update(req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    const params = validate(assetUpdateSchema, req.body, reply);
+    if (!params) return;
+
     const id = Number(req.params.id);
     const data = req.body as {
       name?: string;
